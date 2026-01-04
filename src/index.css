@@ -1,0 +1,278 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  /* Light mode (default) */
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 240 10% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
+    --primary: 142 71% 45%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+    --accent: 240 4.8% 95.9%;
+    --accent-foreground: 240 5.9% 10%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 142 71% 45%;
+    --radius: 0.5rem;
+    
+    /* Custom theme colors */
+    --theme-bg: 0 0% 98%;
+    --theme-card: 0 0% 100%;
+    --theme-text: 240 10% 10%;
+    --theme-text-secondary: 240 5% 45%;
+    --theme-border: 240 5.9% 90%;
+    --theme-hover: 240 4.8% 95%;
+  }
+
+  /* Dark mode */
+  .dark {
+    --background: 0 0% 4%;
+    --foreground: 0 0% 95%;
+    --card: 0 0% 7%;
+    --card-foreground: 0 0% 95%;
+    --popover: 0 0% 7%;
+    --popover-foreground: 0 0% 95%;
+    --primary: 142 71% 45%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 0 0% 14%;
+    --secondary-foreground: 0 0% 95%;
+    --muted: 0 0% 14%;
+    --muted-foreground: 0 0% 60%;
+    --accent: 0 0% 14%;
+    --accent-foreground: 0 0% 95%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 20%;
+    --input: 0 0% 20%;
+    --ring: 142 71% 45%;
+    
+    /* Custom theme colors */
+    --theme-bg: 0 0% 4%;
+    --theme-card: 0 0% 7%;
+    --theme-text: 0 0% 95%;
+    --theme-text-secondary: 0 0% 60%;
+    --theme-border: 0 0% 20%;
+    --theme-hover: 0 0% 10%;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans;
+    margin: 0;
+    padding: 0;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+}
+
+@layer components {
+  .glass-card {
+    @apply bg-card/80 backdrop-blur-md rounded-lg border border-border;
+  }
+
+  .scifi-button {
+    @apply relative overflow-hidden bg-wechat/10 hover:bg-wechat/20 text-wechat border border-wechat/50 rounded-md px-4 py-2 transition-all duration-300;
+  }
+
+  .scifi-button::before {
+    @apply absolute inset-0 bg-gradient-to-r from-transparent via-wechat/20 to-transparent opacity-0;
+    content: '';
+    transform: translateX(-100%);
+    transition: transform 0.5s;
+  }
+
+  .scifi-button:hover::before {
+    @apply opacity-100;
+    transform: translateX(100%);
+  }
+
+  .feed-item {
+    @apply p-4 rounded-lg border border-border hover:border-wechat/50 transition-all duration-300 cursor-pointer w-full box-border;
+  }
+
+  .feed-item:hover {
+    @apply bg-accent/50;
+  }
+
+  /* Theme-aware background classes */
+  .theme-bg {
+    background-color: hsl(var(--theme-bg));
+  }
+
+  .theme-card {
+    background-color: hsl(var(--theme-card));
+  }
+
+  .theme-text {
+    color: hsl(var(--theme-text));
+  }
+
+  .theme-text-secondary {
+    color: hsl(var(--theme-text-secondary));
+  }
+
+  .theme-border {
+    border-color: hsl(var(--theme-border));
+  }
+
+  /* Animation classes */
+  .animate-fade-in {
+    animation: fadeIn 0.3s ease-out forwards;
+  }
+
+  .animate-scale-in {
+    animation: scaleIn 0.3s ease-out forwards;
+  }
+
+  .animate-star-pop {
+    animation: starPop 0.3s ease-out forwards;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(-4px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes scaleIn {
+    from {
+      opacity: 0;
+      transform: scale(0.8);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @keyframes starPop {
+    0% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.3);
+    }
+    100% {
+      transform: scale(1.1);
+    }
+  }
+
+  /* Apple Style Loading Animations */
+  @keyframes pulse-ring {
+    0%, 100% {
+      transform: scale(1);
+      opacity: 0.4;
+    }
+    50% {
+      transform: scale(1.15);
+      opacity: 0.15;
+    }
+  }
+
+  @keyframes pulse-ring-delay {
+    0%, 100% {
+      transform: scale(1);
+      opacity: 0.25;
+    }
+    50% {
+      transform: scale(1.25);
+      opacity: 0.08;
+    }
+  }
+
+  @keyframes breathe {
+    0%, 100% {
+      opacity: 0.6;
+    }
+    50% {
+      opacity: 1;
+    }
+  }
+
+  /* WeChat Green Bouncing Dots Animation */
+  @keyframes bounce-dot {
+    0%, 100% {
+      transform: translateY(0) scale(1);
+      opacity: 1;
+    }
+    50% {
+      transform: translateY(-8px) scale(1.1);
+      opacity: 0.8;
+    }
+  }
+
+  @keyframes pulse-text {
+    0%, 100% {
+      opacity: 0.6;
+    }
+    50% {
+      opacity: 1;
+    }
+  }
+
+  .animate-pulse-ring {
+    animation: pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  .animate-pulse-ring-delay {
+    animation: pulse-ring-delay 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    animation-delay: 0.5s;
+  }
+
+  .animate-breathe {
+    animation: breathe 2.5s ease-in-out infinite;
+  }
+
+  .animate-bounce-dot {
+    animation: bounce-dot 1s ease-in-out infinite;
+  }
+
+  .animate-pulse-text {
+    animation: pulse-text 2s ease-in-out infinite;
+  }
+}
+
+/* Custom scrollbar - Light mode */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: hsl(var(--background));
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--border));
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #07C160;
+}
+
+/* Dark mode scrollbar */
+.dark ::-webkit-scrollbar-track {
+  background: #0a0a0a;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #333;
+}
