@@ -45,41 +45,50 @@ A modern Chrome extension that aggregates tech news from multiple sources with A
 - **Vite** - 构建工具
 - **Chrome Extension Manifest V3** - 扩展平台
 
-## Installation
+## Quick Start
 
-### From Source (Development)
+### Option 1: Download Release (Recommended)
 
-1. Clone the repository
+1. Go to [Releases](https://github.com/florianlanx/InfoTrend/releases) page
+2. Download the latest `InfoTrend-vX.X.X.zip`
+3. Unzip the file
+4. Open Chrome and navigate to `chrome://extensions/`
+5. Enable **Developer mode** (toggle in top right)
+6. Click **Load unpacked** and select the unzipped folder
+7. Click the InfoTrend icon in your toolbar to start!
+
+### Option 2: Build from Source
+
+1. Clone and install
 ```bash
 git clone https://github.com/florianlanx/InfoTrend.git
 cd InfoTrend
-```
-
-2. 安装依赖
-```bash
 npm install
 ```
 
-3. 启动开发服务器
-```bash
-npm run dev
-```
-
-4. 在 Chrome 中加载插件
-   - 打开 `chrome://extensions/`
-   - 启用 "开发者模式"
-   - 点击 "加载已解压的扩展程序"
-   - 选择 `dist` 目录
-
-### 生产构建
-
+2. Build the extension
 ```bash
 npm run build
 ```
 
-构建产物位于 `dist` 目录，可以打包为 `.crx` 文件进行分发。
+3. Load in Chrome
+   - Open `chrome://extensions/`
+   - Enable **Developer mode**
+   - Click **Load unpacked**
+   - Select the `dist` folder
 
-## 使用说明
+## Development
+
+### Run in Development Mode
+
+```bash
+npm install
+npm run dev
+```
+
+Then load the `dist` folder in Chrome as described above.
+
+## Usage / 使用说明
 
 ### 侧边栏
 
