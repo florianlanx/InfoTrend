@@ -18,6 +18,7 @@ import { Toaster } from '@/components/ui/toaster';
 import { useTheme } from '@/hooks/useTheme.ts';
 import { cn } from '@/lib/utils.ts';
 import { useI18n, LANGUAGE_OPTIONS, Locale } from '@/i18n';
+import { logger } from '@/utils/logger.ts';
 
 interface EditingSource {
   id: string;
@@ -75,7 +76,7 @@ function OptionsApp() {
       }));
       setConfig({ ...loadedConfig, sources: sourcesWithIds });
     } catch (error) {
-      console.error('Load config error:', error);
+      logger.error('Load config error:', error);
     } finally {
       setLoading(false);
     }

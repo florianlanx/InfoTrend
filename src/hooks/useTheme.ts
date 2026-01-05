@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { safeStorageGet, safeStorageSet } from '@/utils/chrome.ts';
+import { logger } from '@/utils/logger.ts';
 
 export type Theme = 'light' | 'dark';
 
@@ -23,7 +24,7 @@ export function useTheme() {
           applyTheme('light');
         }
       } catch (error) {
-        console.error('Failed to load theme:', error);
+        logger.error('Failed to load theme:', error);
         applyTheme('light');
       } finally {
         setIsLoading(false);
@@ -52,7 +53,7 @@ export function useTheme() {
     try {
       await safeStorageSet({ [THEME_STORAGE_KEY]: newTheme });
     } catch (error) {
-      console.error('Failed to save theme:', error);
+      logger.error('Failed to save theme:', error);
     }
   }, []);
 

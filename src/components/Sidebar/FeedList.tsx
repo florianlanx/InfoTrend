@@ -13,6 +13,7 @@ import { generateSummary, APINotConfiguredError } from '@/services/aiService.ts'
 import { useFavoriteStore } from '@/stores/favoriteStore';
 import { FavoriteButton } from '@/components/FavoriteButton';
 import { TagList } from '@/components/TagList';
+import { logger } from '@/utils/logger.ts';
 
 interface FeedListProps {
   feeds: FeedItem[];
@@ -89,7 +90,7 @@ function FeedList({ feeds, onFeedUpdate }: FeedListProps) {
     }
     
     if (isNaN(dateObj.getTime())) {
-      console.warn('[FeedList] Invalid date encountered:', date, 'Type:', typeof date);
+      logger.warn('[FeedList] Invalid date encountered:', date, 'Type:', typeof date);
       return '';
     }
     
@@ -176,7 +177,7 @@ function FeedList({ feeds, onFeedUpdate }: FeedListProps) {
         });
       }
     } catch (error) {
-      console.error('[FeedList] Generate AI summary error:', error);
+      logger.error('[FeedList] Generate AI summary error:', error);
 
       // 清除加载状态
       if (onFeedUpdate) {
@@ -206,7 +207,7 @@ function FeedList({ feeds, onFeedUpdate }: FeedListProps) {
         errorMessage,
       });
 
-      console.error('Summary generation failed:', errorMessage);
+      logger.error('Summary generation failed:', errorMessage);
     } finally {
       setLoadingIds(prev => {
         const next = new Set(prev);

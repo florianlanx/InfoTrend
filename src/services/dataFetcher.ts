@@ -5,6 +5,7 @@
 import { FeedItem, SourceConfig } from '../types/index.ts';
 import { SourceRegistry, SourceFetchOptions } from '../sources/index.ts';
 import { getCache, saveCache, updateLastUpdate, saveFeeds } from './storage.ts';
+import { logger } from '../utils/logger.ts';
 
 // Cache duration: 30 minutes
 const CACHE_DURATION = 30 * 60 * 1000;
@@ -72,7 +73,7 @@ export async function fetchAllData(sources: SourceConfig[]): Promise<FeedItem[]>
       }));
       allItems.push(...items);
     } else {
-      console.error(`Error fetching ${enabledSources[index].name}:`, result);
+      logger.error(`Error fetching ${enabledSources[index].name}:`, result);
     }
   });
 
@@ -109,7 +110,7 @@ async function fetchDataByType(source: SourceConfig): Promise<FeedItem[]> {
 
     // Check if source is registered
     if (!SourceRegistry.has(sourceName)) {
-      console.warn(`Source ${sourceName} not found in registry`);
+      logger.warn(`Source ${sourceName} not found in registry`);
       return cachedData?.items || [];
     }
 
@@ -127,7 +128,7 @@ async function fetchDataByType(source: SourceConfig): Promise<FeedItem[]> {
 
     return items;
   } catch (error) {
-    console.error(`Error fetching ${source.type}:`, error);
+    logger.error(`Error fetching ${source.type}:`, error);
     return cachedData?.items || [];
   }
 }

@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 import { toast } from '@/hooks/use-toast';
+import { logger } from '@/utils/logger';
 
 interface ErrorHandlerOptions {
   /** 是否显示 toast 通知 */
@@ -27,7 +28,7 @@ export function useErrorHandler() {
     const errorMessage = message || errorObj.message || '操作失败，请重试';
     
     // 记录错误日志
-    console.error('[ErrorHandler]', errorObj);
+    logger.error('[ErrorHandler]', errorObj);
     
     // 显示 toast 通知
     if (showToast) {

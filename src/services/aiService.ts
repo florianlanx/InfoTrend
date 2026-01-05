@@ -13,6 +13,7 @@ import { getCache, saveCache, getConfig } from './storage.ts';
 import { getStoredLocale } from '../i18n/storage.ts';
 import { ActualLocale } from '../i18n/types.ts';
 import { detectBrowserLocale } from '../i18n/detector.ts';
+import { logger } from '../utils/logger.ts';
 
 // ============================================================================
 // 类型定义
@@ -200,14 +201,14 @@ async function callLLM(
 
         // 429 (Too Many Requests) - 需要重试
         if (response.status === 429 && attempt < maxRetries) {
-          console.warn(`[AI Service] Rate limited, retrying in ${retryDelay * (attempt + 1)}ms`);
+          logger.warn(`[AI Service] Rate limited, retrying in ${retryDelay * (attempt + 1)}ms`);
           await sleep(retryDelay * (attempt + 1));
           continue;
         }
 
         // 5xx 错误 - 服务器错误，可以重试
         if (response.status >= 500 && attempt < maxRetries) {
-          console.warn(`[AI Service] Server error ${response.status}, retrying...`);
+          logger.warn(`[AI Service] Server error ${response.status}, retrying...`);
           await sleep(retryDelay * (attempt + 1));
           continue;
         }

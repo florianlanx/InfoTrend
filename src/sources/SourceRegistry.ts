@@ -4,6 +4,7 @@
  */
 import { BaseSource, SourceFetchOptions } from './base/BaseSource.ts';
 import { FeedItem } from '../types/index.ts';
+import { logger } from '../utils/logger.ts';
 
 /**
  * Registry for managing data sources
@@ -68,13 +69,13 @@ export class SourceRegistry {
   static async fetchFrom(name: string, options?: SourceFetchOptions): Promise<FeedItem[]> {
     const source = this.get(name);
     if (!source) {
-      console.error(`Source ${name} not found in registry`);
+      logger.error(`Source ${name} not found in registry`);
       return [];
     }
     try {
       return await source.fetch(options);
     } catch (error) {
-      console.error(`Error fetching from ${name}:`, error);
+      logger.error(`Error fetching from ${name}:`, error);
       return [];
     }
   }

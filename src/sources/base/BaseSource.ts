@@ -3,6 +3,7 @@
  *   All rights reserved.
  */
 import { FeedItem } from '../../types/index';
+import { logger } from '../../utils/logger';
 
 /**
  * Configuration for fetching data from a source
@@ -63,7 +64,7 @@ export abstract class BaseSource {
     try {
       return await operation();
     } catch (error) {
-      console.error(`${this.sourceName} error:`, error);
+      logger.error(`${this.sourceName} error:`, error);
       return fallback;
     }
   }

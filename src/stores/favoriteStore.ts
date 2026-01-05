@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { FavoriteItem } from '../types/favorite';
+import { logger } from '../utils/logger';
 
 interface FavoriteState {
   favorites: Map<string, FavoriteItem>;
@@ -101,7 +102,7 @@ export const useFavoriteStore = create<FavoriteState>((set, get) => ({
       const result = await generateTags(content, true);
       get().updateTags(id, result.tags, result.category);
     } catch (error) {
-      console.error('Failed to regenerate tags:', error);
+      logger.error('Failed to regenerate tags:', error);
       throw error; // 重新抛出错误让调用方知道失败
     }
   },
@@ -124,7 +125,7 @@ export const useFavoriteStore = create<FavoriteState>((set, get) => ({
         set({ favorites });
       }
     } catch (error) {
-      console.error('Failed to load favorites from storage:', error);
+      logger.error('Failed to load favorites from storage:', error);
     }
   },
 
@@ -135,7 +136,7 @@ export const useFavoriteStore = create<FavoriteState>((set, get) => ({
         favorites: Array.from(favorites.values()),
       });
     } catch (error) {
-      console.error('Failed to save favorites to storage:', error);
+      logger.error('Failed to save favorites to storage:', error);
     }
   },
 }));

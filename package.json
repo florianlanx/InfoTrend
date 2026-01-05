@@ -1,6 +1,6 @@
 {
   "name": "info-trend-chrome-extension",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A modern Chrome extension that aggregates tech news from multiple sources with AI-powered summaries",
   "type": "module",
   "author": "InfoTrend Contributors",

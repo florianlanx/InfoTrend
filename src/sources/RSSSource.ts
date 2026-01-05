@@ -15,6 +15,7 @@ import {
   ensureArray,
   stripHtml,
 } from '../utils/xmlParser.ts';
+import { logger } from '../utils/logger.ts';
 
 interface RSSFetchOptions extends SourceFetchOptions {
   url?: string;
@@ -29,7 +30,7 @@ export class RSSSource extends BaseSource {
 
   async fetch(options?: RSSFetchOptions): Promise<FeedItem[]> {
     if (!options?.url) {
-      console.error('RSS source requires a URL');
+      logger.error('RSS source requires a URL');
       return [];
     }
 
@@ -89,7 +90,7 @@ export class RSSSource extends BaseSource {
         if (pubDate && pubDate.trim()) {
           const parsed = new Date(pubDate);
           if (isNaN(parsed.getTime())) {
-            console.warn(`[RSS] Invalid date parsed from "${pubDate}" in ${options.url}, fallback to now`);
+            logger.warn(`[RSS] Invalid date parsed from "${pubDate}" in ${options.url}, fallback to now`);
             publishedAtDate = new Date();
           } else {
             publishedAtDate = parsed;

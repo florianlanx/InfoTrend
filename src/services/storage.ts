@@ -5,6 +5,7 @@
 import { AppConfig, FeedItem, SourceConfig } from '../types/index.ts';
 import { defaultConfig } from '../types/index.ts';
 import { safeStorageGet, safeStorageSet, safeStorageClear } from '../utils/chrome.ts';
+import { logger } from '../utils/logger.ts';
 
 // 存储键名
 const STORAGE_KEYS = {
@@ -128,7 +129,7 @@ export async function importData(data: string, format: 'json' | 'csv'): Promise<
     }
     return false;
   } catch (error) {
-    console.error('Import error:', error);
+    logger.error('Import error:', error);
     return false;
   }
 }

@@ -7,6 +7,7 @@ import { fetchAllData, setForceRefresh } from '../services/dataFetcher.ts';
 import { generateSummary, APINotConfiguredError } from '../services/aiService.ts';
 import { defaultSources } from '../types/index';
 import { setupDailyRefreshAlarm, ALARM_NAMES } from './alarmScheduler.ts';
+import { logger } from '../utils/logger.ts';
 
 // Initialize on install
 chrome.runtime.onInstalled.addListener(async () => {
@@ -94,7 +95,7 @@ async function initializeData() {
 
     await refreshData();
   } catch (error) {
-    console.error('Initialization error:', error);
+    logger.error('Initialization error:', error);
   }
 }
 
@@ -108,7 +109,7 @@ async function refreshData() {
     await updateLastUpdate();
     await updateDataMetadata();
   } catch (error) {
-    console.error('Refresh error:', error);
+    logger.error('Refresh error:', error);
   }
 }
 
@@ -124,7 +125,7 @@ async function getLatestData() {
       lastUpdate,
     };
   } catch (error) {
-    console.error('Get data error:', error);
+    logger.error('Get data error:', error);
     return {
       config: null,
       feeds: [],

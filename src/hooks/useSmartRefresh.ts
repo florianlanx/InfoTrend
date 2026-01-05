@@ -17,6 +17,7 @@ import {
 } from '@/services/freshnessService';
 import { safeRuntimeSendMessage } from '@/utils/chrome';
 import { useTranslation } from '@/i18n';
+import { logger } from '@/utils/logger';
 
 export interface SmartRefreshState {
   // 当前刷新策略
@@ -83,7 +84,7 @@ export function useSmartRefresh(options: UseSmartRefreshOptions = {}) {
       await new Promise(resolve => setTimeout(resolve, 500));
       return true;
     } catch (error) {
-      console.error('[SmartRefresh] Refresh failed:', error);
+      logger.error('[SmartRefresh] Refresh failed:', error);
       return false;
     }
   }, []);

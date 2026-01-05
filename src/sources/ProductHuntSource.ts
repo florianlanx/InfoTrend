@@ -5,6 +5,7 @@
 import { BaseSource, SourceFetchOptions } from './base/BaseSource';
 import { FeedItem, SourceType } from '../types/index';
 import { SourceRegistry } from './SourceRegistry';
+import { logger } from '../utils/logger';
 
 /**
  * RSS2JSON API response types
@@ -138,7 +139,7 @@ export class ProductHuntSource extends BaseSource {
       } catch (error) {
         const err = error instanceof Error ? error : new Error(String(error));
         errors.push(err);
-        console.warn(`[ProductHunt] Proxy ${proxy.url} failed:`, err.message);
+        logger.warn(`[ProductHunt] Proxy ${proxy.url} failed:`, err.message);
         continue;
       }
     }

@@ -8,6 +8,7 @@ import { getStoredLocale, setStoredLocale } from './storage';
 import { detectBrowserLocale } from './detector';
 import { zhCN } from './locales/zh-CN';
 import { enUS } from './locales/en-US';
+import { logger } from '../utils/logger';
 
 // 翻译文件映射
 const translations: Record<ActualLocale, TranslationMap> = {
@@ -61,7 +62,7 @@ export function I18nProvider({ children, defaultLocale = 'auto' }: I18nProviderP
     const translation = translations[actualLocale][key];
     
     if (!translation) {
-      console.warn(`[i18n] Missing translation for key: ${key}`);
+      logger.warn(`[i18n] Missing translation for key: ${key}`);
       return key;
     }
 
