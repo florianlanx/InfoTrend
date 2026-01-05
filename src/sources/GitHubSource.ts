@@ -2,13 +2,16 @@
  *   Copyright (c) 2025
  *   All rights reserved.
  */
+import * as cheerio from 'cheerio';
+import type { CheerioAPI, Cheerio } from 'cheerio';
+import type { AnyNode } from 'domhandler';
 import { BaseSource, SourceFetchOptions } from './base/BaseSource.ts';
 import { FeedItem } from '../types/index.ts';
 import { SourceRegistry } from './SourceRegistry.ts';
 
 /**
  * Data source for GitHub Trending
- * Uses HTML scraping since GitHub doesn't provide an API for trending
+ * Uses cheerio for stable HTML parsing since GitHub doesn't provide an API for trending
  */
 export class GitHubSource extends BaseSource {
   readonly sourceName = 'GitHub';
@@ -36,40 +39,63 @@ export class GitHubSource extends BaseSource {
 
   /**
    * Parse GitHub trending HTML and extract repository information
+   * Uses cheerio for stable and maintainable HTML parsing
    */
   private parseGitHubTrendingHTML(html: string, count: number): FeedItem[] {
-    const articleRegex = /<article[^>]*class="[^"]*Box-row[^"]*"[^>]*>([\s\S]*?)<\/article>/gi;
-    const articleMatches = [...html.matchAll(articleRegex)];
+    const $ = cheerio.load(html);
+    const articles = $('article.Box-row');
 
-    return articleMatches.slice(0, count).map((match) => {
-      const articleHtml = match[1];
-      return this.parseArticle(articleHtml);
+    const items: FeedItem[] = [];
+
+    articles.slice(0, count).each((_, element) => {
+      const item = this.parseArticle($, $(element));
+      if (item) {
+        items.push(item);
+      }
     });
+
+    return items;
   }
 
   /**
-   * Parse a single repository article
+   * Parse a single repository article element
    */
-  private parseArticle(articleHtml: string): FeedItem {
-    // Extract repository name and owner
-    const repoLinkMatch = articleHtml.match(/<a[^>]*href="\/([^"]+)"[^>]*>/);
-    const repoPath = repoLinkMatch ? repoLinkMatch[1] : '';
-    const [owner, repoName] = repoPath.split('/').filter(Boolean);
+  private parseArticle(
+    _$: CheerioAPI,
+    article: Cheerio<AnyNode>
+  ): FeedItem | null {
+    // Extract repository link from h2 > a
+    const repoLink = article.find('h2 a[href^="/"]').first();
+    const href = repoLink.attr('href') || '';
+
+    // Filter out sponsor links and other non-repo paths
+    if (
+      !href ||
+      href.startsWith('/sponsors/') ||
+      href.includes('/stargazers') ||
+      href.includes('/forks')
+    ) {
+      return null;
+    }
+
+    const parts = href.split('/').filter(Boolean);
+    const owner = parts[0] || '';
+    const repoName = parts[1] || '';
+
+    if (!owner || !repoName) {
+      return null;
+    }
 
     // Extract description
-    const descMatch = articleHtml.match(/<p[^>]*class="[^"]*col-9[^"]*"[^>]*>([\s\S]*?)<\/p>/i);
-    const description = descMatch
-      ? descMatch[1].replace(/<[^>]*>/g, '').trim()
-      : '';
+    const descEl = article.find('p.col-9, p.my-1').first();
+    const description = descEl.text().trim();
 
     // Extract programming language
-    const langMatch = articleHtml.match(
-      /<span[^>]*itemprop="programmingLanguage"[^>]*>([^<]+)<\/span>/i
-    );
-    const language = langMatch ? langMatch[1].trim() : '';
+    const langEl = article.find('span[itemprop="programmingLanguage"]').first();
+    const language = langEl.text().trim();
 
     // Extract star count
-    const starCount = this.parseStarCount(articleHtml);
+    const starCount = this.parseStarCount(article);
 
     return {
       id: this.generateId(`${owner}-${repoName}`),
@@ -77,7 +103,7 @@ export class GitHubSource extends BaseSource {
       source: 'GitHub',
       url: `https://github.com/${owner}/${repoName}`,
       summary: description || `${owner}/${repoName} - ${language}`,
-      publishedAt: undefined, // GitHub trending doesn't provide publish date
+      publishedAt: undefined,
       tags: language ? [language, 'GitHub Trending'] : ['GitHub Trending'],
       score: starCount,
       upvotes: starCount,
@@ -86,27 +112,30 @@ export class GitHubSource extends BaseSource {
   }
 
   /**
-   * Parse star count from article HTML
-   * Tries multiple patterns to handle GitHub's HTML structure changes
+   * Parse star count from article element
    */
-  private parseStarCount(articleHtml: string): number {
-    // Pattern 1: Find stargazers link with SVG + number
-    const starsMatch1 = articleHtml.match(
-      /href="[^"]*\/stargazers"[^>]*>[\s\S]*?<\/svg>\s*([\d,\.]+[km]?)/i
-    );
+  private parseStarCount(article: Cheerio<AnyNode>): number {
+    // Find stargazers link and extract the number
+    const starLink = article.find('a[href$="/stargazers"]').first();
+    if (starLink.length) {
+      const text = starLink.text().trim();
+      const numMatch = text.match(/([\d,\.]+[km]?)/i);
+      if (numMatch) {
+        return this.parseNumberWithSuffix(numMatch[1]);
+      }
+    }
 
-    // Pattern 2: Find octicon-star SVG followed by number
-    const starsMatch2 = articleHtml.match(
-      /octicon-star[\s\S]*?<\/svg>\s*([\d,\.]+[km]?)/i
-    );
+    // Fallback: look for octicon-star nearby
+    const starIcon = article.find('.octicon-star').first();
+    if (starIcon.length && starIcon.parent().length) {
+      const text = starIcon.parent().text().trim();
+      const numMatch = text.match(/([\d,\.]+[km]?)/i);
+      if (numMatch) {
+        return this.parseNumberWithSuffix(numMatch[1]);
+      }
+    }
 
-    // Pattern 3: Find stargazers link nearby number
-    const starsMatch3 = articleHtml.match(/\/stargazers"[^>]*>[\s\S]*?([\d,\.]+[km]?)/i);
-
-    const match = starsMatch1 || starsMatch2 || starsMatch3;
-    if (!match) return 0;
-
-    return this.parseNumberWithSuffix(match[1]);
+    return 0;
   }
 
   /**
